@@ -1,8 +1,10 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import "react-quill/dist/quill.bubble.css";
 import "./CustomQuill.css";
+import { useParams } from "react-router-dom";
+import axios from "axios";
 
 const modules = {
   toolbar: [
@@ -34,16 +36,24 @@ const formats = [
 ];
 
 const SingleDocument = () => {
-  const [document, setDocument] = useState({
-    title: "Document 1",
-    lastModified: "2024-08-20",
-  });
+  const docId = useParams().id;
+
   const [value, setValue] = useState("");
   console.log(value);
 
   const handleContentChange = (content, delta, source, editor) => {
     setValue(editor.getContents());
   };
+
+  useEffect(() => {
+    const getDoc = async () => {
+      const doc = await axios.get(`/api/v1/doc/${docId}`);
+      console.log(doc);
+      setValue(doc.data.data.content);
+    };
+
+    getDoc();
+  }, []);
 
   return (
     <div className="min-h-screen bg-gray-100">

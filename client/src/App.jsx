@@ -1,9 +1,10 @@
-import './App.css'
+import "./App.css";
 import axios from "axios";
-import Login from './components/Login'
-import Register from './components/Register'
+import Login from "./components/Login";
+import Register from "./components/Register";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-
+import Home from "./pages/Home";
+import SingleDocument from "./pages/SingleDocument";
 
 axios.defaults.baseURL = "http://localhost:3000";
 axios.defaults.withCredentials = true;
@@ -11,19 +12,24 @@ axios.defaults.withCredentials = true;
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <h1>Documate</h1>
+    element: <Home />,
   },
   {
     path: "/login",
-    element: <Login/>
-  },{
+    element: <Login />,
+  },
+  {
     path: "/register",
-    element: <Register/>
-  }
+    element: <Register />,
+  },
+  {
+    path: "/doc/:id",
+    element: <SingleDocument />,
+  },
 ]);
 
 function App() {
   return <RouterProvider router={router} />;
 }
 
-export default App
+export default App;

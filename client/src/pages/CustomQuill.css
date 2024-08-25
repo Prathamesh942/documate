@@ -1,0 +1,12 @@
+.ql-container {
+  border: none !important;
+  font-family: "Arial", sans-serif;
+}
+
+.ql-toolbar {
+  border: none !important;
+}
+
+.quill {
+  box-shadow: none;
+}

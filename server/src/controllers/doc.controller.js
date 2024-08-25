@@ -29,4 +29,34 @@ const getDoc = async (req, res) => {
   return res.status(200).json({ message: "", data: doc });
 };
 
-export { createDoc, getDocs, getDoc };
+const updateDoc = async (req, res) => {
+  const docId = req.params.id;
+  const updatedDoc = req.body;
+
+  console.log(updatedDoc);
+
+  try {
+    const document = await Document.findByIdAndUpdate(
+      docId,
+      {
+        $set: {
+          title: updatedDoc.title,
+          content: updatedDoc.content,
+        },
+      },
+      { new: true, runValidators: true } // Options: return the updated document and run validators
+    );
+
+    if (!document) {
+      return res.status(404).json({ message: "Document not found" });
+    }
+
+    res
+      .status(200)
+      .json({ message: "Document updated successfully", data: document });
+  } catch (error) {
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+};
+
+export { createDoc, getDocs, getDoc, updateDoc };

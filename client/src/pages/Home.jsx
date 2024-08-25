@@ -47,7 +47,7 @@ const Home = () => {
               key={doc.id}
               className="p-4 bg-white rounded-lg shadow hover:shadow-lg transition-shadow duration-200 cursor-pointer"
               onClick={() => {
-                navigate("/doc/1");
+                navigate(`/doc/${doc._id}`);
               }}
             >
               <h2 className="text-xl font-semibold text-gray-800">

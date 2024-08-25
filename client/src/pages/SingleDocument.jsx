@@ -15,7 +15,7 @@ const modules = {
     ["bold", "italic", "underline", "strike"],
     [{ color: [] }, { background: [] }],
     [{ align: [] }],
-    ["link", "image"],
+    ["link"],
     ["clean"],
   ],
 };

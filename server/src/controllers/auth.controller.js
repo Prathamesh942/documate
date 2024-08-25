@@ -55,4 +55,16 @@ const loginUser = async (req, res) => {
     .json({ message: "User logged in", loggedInUser, accessToken });
 };
 
-export { registerUser, loginUser };
+const logoutUser = async (req, res) => {
+  const options = {
+    httpOnly: true,
+    secure: true,
+  };
+
+  return res
+    .status(200)
+    .clearCookie("accessToken", options)
+    .json({ message: "User logged out" });
+};
+
+export { registerUser, loginUser, logoutUser };

@@ -1,55 +1,58 @@
-import {User} from "../models/user.model.js"
+import { User } from "../models/user.model.js";
 import { ApiError } from "../utils/ApiError.js";
 
 const registerUser = async (req, res) => {
-    const {username, email, password} = req.body;
-    try{
-        const existingUser = await User.findOne({email});
-        if(existingUser) return res.status(400).json({message: "User already exists"});
-        const newUser = new User({
-            username, email, password
-        })
+  const { username, email, password } = req.body;
+  try {
+    const existingUser = await User.findOne({ email });
+    if (existingUser)
+      return res.status(400).json({ message: "User already exists" });
+    const newUser = new User({
+      username,
+      email,
+      password,
+    });
 
-        await newUser.save();
+    await newUser.save();
 
-        res.status(201).json({message: "user registered successfully", newUser});
-    }catch(error){
-        console.log(error);
-        res.status(500).json({message: "server error", error})
-    }
-}
+    res.status(201).json({ message: "user registered successfully", newUser });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "server error", error });
+  }
+};
 
 const loginUser = async (req, res) => {
-    const {email, username, password} = req.body;
-    if(!username && !email){
-        throw new ApiError(400, "username or email required")
-    }
-    const user = await User.findOne({$or: [{username}, {email}]})
+  const { email, password } = req.body;
+  if (!email) {
+    return res.status(400).json({ message: "email" });
+  }
+  const user = await User.findOne({ $or: [{ email }] });
 
-    if(!user){
-        throw new ApiError(404, "User not found")
-    }
+  if (!user) {
+    return res.status(404).json({ message: "User not found" });
+  }
 
-    const isPasswordValid = await user.comparePasswords(password);
+  const isPasswordValid = await user.comparePasswords(password);
 
-    if(!isPasswordValid){
-        throw new ApiError(401, "Invalid password")
-    }
+  if (!isPasswordValid) {
+    return res.status(401).json({ message: "Invalid password" });
+  }
 
-    const accessToken = await user.generateAccessToken();
+  const accessToken = await user.generateAccessToken();
 
-    const loggedInUser = await User.findById(user._id).select(" -password");
+  const loggedInUser = await User.findById(user._id).select(" -password");
 
-    const options = {
-      httpOnly: true,
-      secure: true,
-      sameSite: "None",
-    };
-  
-    return res
-      .status(200)
-      .cookie("accessToken", accessToken, options)
-      .json({message: "User logged in", loggedInUser,accessToken});
-}
+  const options = {
+    httpOnly: true,
+    secure: true,
+    sameSite: "None",
+  };
 
-export {registerUser, loginUser}
+  return res
+    .status(200)
+    .cookie("accessToken", accessToken, options)
+    .json({ message: "User logged in", loggedInUser, accessToken });
+};
+
+export { registerUser, loginUser };

@@ -1,6 +1,7 @@
 import express from "express";
 import authRouter from "./routes/auth.routes.js";
 import docRouter from "./routes/document.routes.js";
+import userRouter from "./routes/user.routes.js";
 import bodyParser from "body-parser";
 import cookieParser from "cookie-parser";
 import cors from "cors";
@@ -24,5 +25,6 @@ app.get("/", (req, res) => {
 
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/doc", docRouter);
+app.use("/api/v1/user", userRouter);
 
 export { app };

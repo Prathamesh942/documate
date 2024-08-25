@@ -3,7 +3,7 @@ import { Document } from "../models/document.model.js";
 const createDoc = async (req, res) => {
   const newDoc = await Document.create({
     title: "Untitled",
-    content: {},
+    content: [],
     creator: req.user._id,
   });
 
@@ -17,4 +17,16 @@ const getDocs = async (req, res) => {
   if (!docs) return res.status(404).json({ message: "Documents not found" });
   return res.status(200).json({ message: "", docs });
 };
-export { createDoc, getDocs };
+
+const getDoc = async (req, res) => {
+  const id = req.params.id;
+  console.log(id);
+
+  const doc = await Document.findById(id);
+  console.log(doc);
+
+  if (!doc) return res.status(404).json({ message: "Document not found" });
+  return res.status(200).json({ message: "", data: doc });
+};
+
+export { createDoc, getDocs, getDoc };

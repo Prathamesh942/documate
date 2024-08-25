@@ -1,12 +1,25 @@
-import React from "react";
+import axios from "axios";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 const Home = () => {
-  const documents = [
-    { id: 1, title: "Document 1", lastModified: "2024-08-20" },
-    { id: 2, title: "Document 2", lastModified: "2024-08-18" },
-    { id: 3, title: "Document 3", lastModified: "2024-08-15" },
-  ];
+  const [documents, setDocuments] = useState([]);
+
+  const getDocs = async () => {
+    const docs = await axios.get("/api/v1/user/docs");
+    setDocuments(docs.data.docs);
+  };
+
+  const createDocument = async () => {
+    const res = await axios.post("/api/v1/doc/create");
+    navigate(`/doc/${res.data.newDoc._id}`);
+  };
+
+  console.log(documents);
+
+  useEffect(() => {
+    getDocs();
+  }, []);
 
   const navigate = useNavigate();
 
@@ -20,7 +33,10 @@ const Home = () => {
 
       <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
         <div className="mb-4">
-          <button className="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600">
+          <button
+            className="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600"
+            onClick={createDocument}
+          >
             Create New Document
           </button>
         </div>

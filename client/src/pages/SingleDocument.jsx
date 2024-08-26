@@ -1,11 +1,12 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import "react-quill/dist/quill.bubble.css";
 import "./CustomQuill.css";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
-import { updateDoc } from "../../../server/src/controllers/doc.controller";
+import io from "socket.io-client";
+import debounce from "lodash/debounce";
 
 const modules = {
   toolbar: [
@@ -36,35 +37,61 @@ const formats = [
   "image",
 ];
 
+const socket = io("http://localhost:3000");
+
 const SingleDocument = () => {
+  const navigate = useNavigate();
   const docId = useParams().id;
 
   const [value, setValue] = useState("");
-  console.log(value);
 
-  const handleContentChange = (content, delta, source, editor) => {
-    setValue(editor.getContents());
-  };
+  const handleContentChange = useCallback(
+    debounce((content, delta, source, editor) => {
+      setValue(editor.getContents());
+      socket.emit("document-update", {
+        roomId: docId,
+        content: editor.getContents(),
+      });
+    }, 50),
+    []
+  );
 
   const saveDoc = async () => {
     console.log("saving");
-
     const res = await axios.put(`/api/v1/doc/update/${docId}`, {
       title: "untitled",
       content: value,
     });
-
     console.log(res);
   };
 
   useEffect(() => {
     const getDoc = async () => {
-      const doc = await axios.get(`/api/v1/doc/${docId}`);
-      console.log(doc);
-      setValue(doc.data.data.content);
+      try {
+        const doc = await axios.get(`/api/v1/doc/${docId}`);
+        setValue(doc.data.data.content);
+      } catch (error) {
+        console.log("error", error);
+        if (error.status === 401) navigate("/login");
+      }
     };
-
     getDoc();
+  }, [socket]);
+
+  useEffect(() => {
+    socket.on("connect", () => {
+      console.log("Connected to server");
+      socket.emit("joinRoom", { roomId: docId });
+
+      socket.on("document-update", ({ content }) => {
+        setValue(content);
+      });
+    });
+
+    return () => {
+      socket.disconnect();
+      console.log("Socket disconnected");
+    };
   }, []);
 
   return (
@@ -75,8 +102,8 @@ const SingleDocument = () => {
           <p className="text-gray-500">
             Last modified: {document.lastModified}
           </p>
-          <div className=" flex">
-            <button className=" bg-blue-100 p-2 rounded-lg" onClick={saveDoc}>
+          <div className="flex">
+            <button className="bg-blue-100 p-2 rounded-lg" onClick={saveDoc}>
               Save
             </button>
           </div>

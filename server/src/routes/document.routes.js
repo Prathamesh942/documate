@@ -5,7 +5,7 @@ import { verifyJWT } from "../middlewares/auth.middleware.js";
 const router = Router();
 
 router.route("/create").post(verifyJWT, createDoc);
-router.route("/:id").get(getDoc);
+router.route("/:id").get(verifyJWT, getDoc);
 router.route("/update/:id").put(updateDoc);
 // router.route("/delete/:id").delete();
 

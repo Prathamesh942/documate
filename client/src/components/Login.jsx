@@ -16,10 +16,14 @@ const Login = () => {
 
     try {
       setLoading(true);
-      await axios.post("/api/v1/auth/login", {
+      const res = await axios.post("/api/v1/auth/login", {
         email,
         password,
       });
+      console.log(res);
+      const user = res.data.loggedInUser;
+      localStorage.setItem("user", JSON.stringify(user));
+
       setLoading(false);
       navigate("/");
     } catch (err) {

@@ -33,7 +33,13 @@ io.on("connection", (socket) => {
   //document update
   socket.on("document-update", (data) => {
     socket.to(data.roomId).emit("document-update", { content: data.content });
-    console.log(data.content);
+    // console.log(data.content);
+  });
+
+  //cursor update
+  socket.on("cursor-update", (data) => {
+    socket.to(data.roomId).emit("cursor-update", { cursor: data.cursor });
+    // console.log(data.cursor);
   });
 
   socket.on("disconnect", () => {

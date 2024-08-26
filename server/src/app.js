@@ -55,6 +55,10 @@ io.on("connection", (socket) => {
     // console.log(data.cursor);
   });
 
+  socket.on("docSaved", (data) => {
+    socket.to(data.roomId).emit("docSaved");
+  });
+
   socket.on("disconnect", () => {
     for (let roomId in rooms) {
       const room = rooms[roomId];

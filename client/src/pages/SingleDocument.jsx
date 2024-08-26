@@ -76,6 +76,7 @@ const socket = io("http://localhost:3000");
 const SingleDocument = () => {
   const navigate = useNavigate();
   const docId = useParams().id;
+  const [title, setTitle] = useState("");
   const [value, setValue] = useState("");
   const quillRef = useRef(null);
   const [color, setColor] = useState(null);
@@ -116,24 +117,26 @@ const SingleDocument = () => {
 
   const saveDoc = async () => {
     console.log("saving");
+    socket.emit("docSaved", { roomId: docId });
     const res = await axios.put(`/api/v1/doc/update/${docId}`, {
-      title: "untitled",
+      title,
       content: value,
     });
     console.log(res);
   };
 
-  useEffect(() => {
-    const getDoc = async () => {
-      try {
-        const doc = await axios.get(`/api/v1/doc/${docId}`);
-        setValue(doc.data.data.content);
-      } catch (error) {
-        console.log("error", error);
-        if (error.status === 401) navigate("/login");
-      }
-    };
+  const getDoc = async () => {
+    try {
+      const doc = await axios.get(`/api/v1/doc/${docId}`);
+      setTitle(doc.data.data.title);
+      setValue(doc.data.data.content);
+    } catch (error) {
+      console.log("error", error);
+      if (error.status === 401) navigate("/login");
+    }
+  };
 
+  useEffect(() => {
     getDoc();
   }, [docId, navigate]);
 
@@ -160,6 +163,10 @@ const SingleDocument = () => {
         setValue(content);
       });
 
+      socket.on("docSaved", async () => {
+        await getDoc();
+      });
+
       socket.on("cursor-update", ({ cursor }) => {
         console.log(cursor.index);
         const { index, length, user } = cursor;
@@ -181,10 +188,14 @@ const SingleDocument = () => {
       <header className="bg-white shadow">
         <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8 flex justify-between items-center">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Document Title</h1>
-            <p className="text-gray-500">
-              Last modified: {/* add date here */}
-            </p>
+            <input
+              type="text"
+              className="text-3xl font-bold text-gray-900 bg-transparent border-none outline-none focus:ring-0"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)} // Update the title state on input change
+            />
+
+            <p className="text-gray-500"></p>
             <div className="flex">
               <button className="bg-blue-100 p-2 rounded-lg" onClick={saveDoc}>
                 Save

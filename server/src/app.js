@@ -18,6 +18,8 @@ const io = new Server(server, {
   },
 });
 
+const rooms = {};
+
 io.on("connection", (socket) => {
   console.log("a user connected");
 
@@ -25,9 +27,20 @@ io.on("connection", (socket) => {
   socket.on("joinRoom", (data) => {
     console.log(`${data.username} joined room: ${data.roomId}`);
     socket.join(data.roomId);
-    socket
-      .to(data.roomId)
-      .emit("message", `${data.username} has joined the room`);
+
+    if (!rooms[data.roomId]) {
+      rooms[data.roomId] = [];
+    }
+    rooms[data.roomId].push({ user: data.username, id: socket.id });
+
+    socket.to(data.roomId).emit(
+      "roomUsers",
+      rooms[data.roomId].map((user) => user.user)
+    );
+    socket.emit(
+      "roomUsers",
+      rooms[data.roomId].map((user) => user.user)
+    );
   });
 
   //document update
@@ -43,7 +56,20 @@ io.on("connection", (socket) => {
   });
 
   socket.on("disconnect", () => {
-    console.log("user disconnected");
+    for (let roomId in rooms) {
+      const room = rooms[roomId];
+      const userIndex = room.findIndex((u) => u.id === socket.id);
+
+      if (userIndex !== -1) {
+        const [disconnectedUser] = room.splice(userIndex, 1);
+
+        io.to(roomId).emit(
+          "roomUsers",
+          room.map((u) => u.user)
+        );
+        console.log(`${disconnectedUser.user} left room: ${roomId}`);
+      }
+    }
   });
 });
 

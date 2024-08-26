@@ -79,6 +79,7 @@ const SingleDocument = () => {
   const [value, setValue] = useState("");
   const quillRef = useRef(null);
   const [color, setColor] = useState(null);
+  const [room, setRoom] = useState([]);
 
   if (!color) {
     const randomColor =
@@ -142,7 +143,7 @@ const SingleDocument = () => {
 
     socket.on("connect", () => {
       console.log("Connected to server");
-      socket.emit("joinRoom", { roomId: docId });
+      socket.emit("joinRoom", { roomId: docId, username: storedUser.username });
 
       console.log(color);
 
@@ -150,6 +151,10 @@ const SingleDocument = () => {
       // console.log("cursor for " + storedUser.username + "created");
       // cursors.createCursor("user1", "User 1", "red");
       // cursors.moveCursor("user1", { index: 5, length: 0 });
+
+      socket.on("roomUsers", (room) => {
+        setRoom(room);
+      });
 
       socket.on("document-update", ({ content }) => {
         setValue(content);
@@ -166,7 +171,7 @@ const SingleDocument = () => {
 
     return () => {
       cursors.removeCursor(storedUser.username);
-      socket.disconnect();
+      socket.disconnect({ roomId: docId, user: storedUser.username });
       console.log("Socket disconnected");
     };
   }, [docId]);
@@ -174,13 +179,32 @@ const SingleDocument = () => {
   return (
     <div className="min-h-screen bg-gray-100">
       <header className="bg-white shadow">
-        <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-          <h1 className="text-3xl font-bold text-gray-900">Document Title</h1>
-          <p className="text-gray-500">Last modified: {/* add date here */}</p>
-          <div className="flex">
-            <button className="bg-blue-100 p-2 rounded-lg" onClick={saveDoc}>
-              Save
-            </button>
+        <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8 flex justify-between items-center">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900">Document Title</h1>
+            <p className="text-gray-500">
+              Last modified: {/* add date here */}
+            </p>
+            <div className="flex">
+              <button className="bg-blue-100 p-2 rounded-lg" onClick={saveDoc}>
+                Save
+              </button>
+            </div>
+          </div>
+          <div>
+            <div className="flex space-x-2">
+              {room.map((user, index) => {
+                return (
+                  <div
+                    key={index}
+                    className="relative w-10 h-10 flex justify-center items-center rounded-full bg-blue-400 text-white font-semibold cursor-pointer hover:bg-blue-500 transition-all duration-200"
+                    title={user} // Show the full username on hover
+                  >
+                    {user[0].toUpperCase()}
+                  </div>
+                );
+              })}
+            </div>
           </div>
         </div>
       </header>

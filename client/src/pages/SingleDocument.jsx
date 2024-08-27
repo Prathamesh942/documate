@@ -102,7 +102,7 @@ const SingleDocument = () => {
         roomId: docId,
         content: editor.getContents(),
       });
-    }, 30),
+    }, 10),
     []
   );
 

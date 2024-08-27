@@ -71,7 +71,7 @@ const cursorColors = [
   "chocolate",
 ];
 
-const socket = io("http://localhost:3000");
+const socket = io("https://documate-36bo.onrender.com");
 
 const SingleDocument = () => {
   const navigate = useNavigate();

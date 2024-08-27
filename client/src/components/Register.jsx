@@ -1,38 +1,38 @@
-import React, { useState } from 'react';
-import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import React, { useState } from "react";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const Register = () => {
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError('');
-    setSuccess('');
+    setError("");
+    setSuccess("");
 
     try {
-        setLoading(true);
-      await axios.post('/api/v1/auth/register', {
-        username:name,
+      setLoading(true);
+      await axios.post("/api/v1/auth/register", {
+        username: name,
         email,
         password,
       });
       setLoading(false);
       navigate("/login");
-      setName('');
-      setEmail('');
-      setPassword('');
+      setName("");
+      setEmail("");
+      setPassword("");
     } catch (err) {
-        setLoading(false);
-        console.log(err);
-        setError(err.response.data.message);
+      setLoading(false);
+      console.log(err);
+      setError(err.response.data.message);
     }
   };
 
@@ -41,7 +41,9 @@ const Register = () => {
       <div className="w-full max-w-md bg-white p-8 rounded-lg shadow-md">
         <h2 className="text-2xl font-bold text-center mb-6">Register</h2>
         {error && <p className="text-red-500 text-center mb-4">{error}</p>}
-        {success && <p className="text-green-500 text-center mb-4">{success}</p>}
+        {success && (
+          <p className="text-green-500 text-center mb-4">{success}</p>
+        )}
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
             <label className="block text-gray-700">Name</label>
@@ -76,8 +78,12 @@ const Register = () => {
           <button
             type="submit"
             className="w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600"
-          >{!loading ? <>Register</> : <>Loading</>}
+          >
+            {!loading ? <>Register</> : <>Loading</>}
           </button>
+          <span>
+            Already have an account? <Link to={"/login"}>Login</Link>{" "}
+          </span>
         </form>
       </div>
     </div>

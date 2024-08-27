@@ -89,6 +89,9 @@ const SingleDocument = () => {
   }
 
   const storedUser = JSON.parse(localStorage.getItem("user"));
+  if (!storedUser) {
+    navigate("/login");
+  }
 
   const handleContentChange = useCallback(
     debounce((content, delta, source, editor) => {
@@ -132,7 +135,7 @@ const SingleDocument = () => {
       setValue(doc.data.data.content);
     } catch (error) {
       console.log("error", error);
-      if (error.status === 401) navigate("/login");
+      navigate("/login");
     }
   };
 

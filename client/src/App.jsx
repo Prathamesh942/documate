@@ -6,7 +6,7 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Home from "./pages/Home";
 import SingleDocument from "./pages/SingleDocument";
 
-axios.defaults.baseURL = "http://localhost:3000";
+axios.defaults.baseURL = "https://documate-36bo.onrender.com";
 axios.defaults.withCredentials = true;
 
 const router = createBrowserRouter([

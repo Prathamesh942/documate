@@ -202,7 +202,10 @@ const SingleDocument = () => {
               onChange={(e) => setTitle(e.target.value)}
             />
             <div className="flex mt-2">
-              <button className="bg-blue-100 p-2 rounded-lg w-full md:w-auto">
+              <button
+                className="bg-blue-100 p-2 rounded-lg w-full md:w-auto"
+                onClick={saveDoc}
+              >
                 Save
               </button>
             </div>

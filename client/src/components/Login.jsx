@@ -64,8 +64,11 @@ const Login = () => {
           >
             {loading ? <>Loading</> : <>Login</>}
           </button>
-          <span>
-            Don't have an account? <Link to={"/register"}>Register</Link>{" "}
+          <span className=" text-center">
+            Don't have an account?
+            <Link to={"/register"} className=" text-blue-500">
+              Register
+            </Link>
           </span>
         </form>
       </div>

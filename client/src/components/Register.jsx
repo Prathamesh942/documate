@@ -81,8 +81,11 @@ const Register = () => {
           >
             {!loading ? <>Register</> : <>Loading</>}
           </button>
-          <span>
-            Already have an account? <Link to={"/login"}>Login</Link>{" "}
+          <span className=" text-center">
+            Already have an account?
+            <Link to={"/login"} className="text-blue-500">
+              Login
+            </Link>
           </span>
         </form>
       </div>

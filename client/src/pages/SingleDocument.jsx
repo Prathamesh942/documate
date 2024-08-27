@@ -126,6 +126,7 @@ const SingleDocument = () => {
 
   const saveDoc = async () => {
     console.log("saving");
+    setSaveButtonText("saving");
     socket.emit("docSaved", { roomId: docId });
     const res = await axios.put(`/api/v1/doc/update/${docId}`, {
       title,
@@ -134,7 +135,7 @@ const SingleDocument = () => {
     setSaveButtonText("Saved");
     setTimeout(() => {
       setSaveButtonText("Save");
-    }, 2000);
+    }, 500);
     console.log(res);
   };
 
@@ -167,6 +168,21 @@ const SingleDocument = () => {
   useEffect(() => {
     getDoc();
   }, [docId, navigate]);
+
+  useEffect(() => {
+    const handleSaveShortcut = (event) => {
+      if ((event.ctrlKey || event.metaKey) && event.key === "s") {
+        event.preventDefault();
+        saveDoc();
+      }
+    };
+
+    document.addEventListener("keydown", handleSaveShortcut);
+
+    return () => {
+      document.removeEventListener("keydown", handleSaveShortcut);
+    };
+  }, []);
 
   useEffect(() => {
     const quill = quillRef.current.getEditor();
@@ -221,7 +237,7 @@ const SingleDocument = () => {
               <img
                 src="/logo.png"
                 alt="Logo"
-                className="h-10 w-10 md:h-10 md:w-10 mr-3"
+                className="h-10 min-w-10 md:h-10 md:w-10 mr-3 object-cover"
               />
             </Link>
             <input
@@ -230,34 +246,47 @@ const SingleDocument = () => {
               value={title}
               onChange={(e) => setTitle(e.target.value)}
             />
-            <div>
-              <button
-                className="bg-blue-400 p-2 rounded-lg w-full md:w-auto text-white"
-                onClick={saveDoc}
-              >
-                {saveButtonText}
-              </button>
-              <button
-                className="bg-blue-400 p-2 rounded-lg w-full md:w-auto text-white"
-                onClick={handleShare}
-              >
-                {shareButtonText}
-              </button>
+            <button
+              className="bg-blue-500 p-2 rounded-lg w-full md:w-auto text-white md:hidden max-w-20 mx-4 flex items-center gap-1 justify-center"
+              onClick={handleShare}
+            >
+              {shareButtonText}
+              <img className=" w-6 h-6" src="/link.png" alt="" />
+            </button>
+            <div className=" border rounded-full min-w-10 min-h-10 w-10 h-10 flex justify-center items-center bg-blue-500 text-white md:hidden">
+              {storedUser.username[0].toUpperCase()}
             </div>
           </div>
 
-          <div className="w-full md:w-auto">
-            <div className="flex space-x-2 justify-start md:justify-end">
-              {room.map((user, index) => (
-                <div
-                  key={index}
-                  className="relative w-8 h-8 md:w-10 md:h-10 flex justify-center items-center rounded-full bg-blue-400 text-white font-semibold cursor-pointer hover:bg-blue-500 transition-all duration-200"
-                  title={user}
-                  style={{ backgroundColor: user.color }}
-                >
-                  {user[0].toUpperCase()}
+          <div className=" flex gap-5 items-center">
+            <button onClick={saveDoc}>{saveButtonText}</button>
+            <div className="w-full md:w-auto">
+              {room.length > 1 && (
+                <div className="flex space-x-2 justify-start md:justify-end border-2 rounded-md p-1">
+                  {room
+                    .filter((user) => storedUser.username != user)
+                    .map((user, index) => (
+                      <div
+                        key={index}
+                        className="relative w-8 h-8 md:w-10 md:h-10 flex justify-center items-center rounded-full bg-blue-400 text-white font-semibold cursor-pointer hover:bg-blue-500 transition-all duration-200"
+                        title={user}
+                        style={{ backgroundColor: user.color }}
+                      >
+                        {user[0].toUpperCase()}
+                      </div>
+                    ))}
                 </div>
-              ))}
+              )}
+            </div>
+            <button
+              className="bg-blue-500 p-2 rounded-lg w-full md:w-auto text-white max-md:hidden flex justify-center items-center"
+              onClick={handleShare}
+            >
+              {shareButtonText}
+              <img className=" w-6 h-6" src="/link.png" alt="" />
+            </button>
+            <div className=" border rounded-full min-w-10 min-h-10 w-10 h-10 flex justify-center items-center bg-blue-500 text-white max-md:hidden">
+              {storedUser.username[0].toUpperCase()}
             </div>
           </div>
         </div>

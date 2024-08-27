@@ -77,9 +77,20 @@ io.on("connection", (socket) => {
   });
 });
 
+const allowedOrigins = [
+  "http://localhost:5173",
+  "https://documates.vercel.app",
+];
+
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: function (origin, callback) {
+      if (allowedOrigins.includes(origin) || !origin) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
     credentials: true,
     exposedHeaders: ["Set-Cookie"],
   })

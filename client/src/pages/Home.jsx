@@ -38,6 +38,8 @@ const Home = () => {
             className=" font-semibold border bg-blue-400 rounded-xl p-2 text-white"
             onClick={async () => {
               const res = await axios.post("/api/v1/auth/logout");
+              clearCookies();
+              navigate("/login");
               console.log(res);
             }}
           >

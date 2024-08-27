@@ -227,13 +227,13 @@ const SingleDocument = () => {
             />
             <div>
               <button
-                className="bg-blue-400 p-2 rounded-lg w-full md:w-auto"
+                className="bg-blue-400 p-2 rounded-lg w-full md:w-auto text-white"
                 onClick={saveDoc}
               >
                 {saveButtonText}
               </button>
               <button
-                className="bg-blue-400 p-2 rounded-lg w-full md:w-auto"
+                className="bg-blue-400 p-2 rounded-lg w-full md:w-auto text-white"
                 onClick={handleShare}
               >
                 {shareButtonText}

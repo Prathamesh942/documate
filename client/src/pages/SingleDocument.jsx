@@ -92,9 +92,6 @@ const SingleDocument = () => {
   }
 
   const storedUser = JSON.parse(localStorage.getItem("user"));
-  if (!storedUser) {
-    navigate("/login");
-  }
 
   const handleContentChange = useCallback(
     debounce((content, delta, source, editor) => {
@@ -156,12 +153,19 @@ const SingleDocument = () => {
 
   const getDoc = async () => {
     try {
+      if (!storedUser) {
+        navigate("/login");
+        return;
+      }
       const doc = await axios.get(`/api/v1/doc/${docId}`);
       setTitle(doc.data.data.title);
       setValue(doc.data.data.content);
     } catch (error) {
       console.log("error", error);
-      navigate("/login");
+      if (error.status == 401) {
+        navigate("/login");
+        return;
+      }
     }
   };
 
@@ -190,7 +194,10 @@ const SingleDocument = () => {
 
     socket.on("connect", () => {
       console.log("Connected to server");
-      socket.emit("joinRoom", { roomId: docId, username: storedUser.username });
+      socket.emit("joinRoom", {
+        roomId: docId,
+        username: storedUser?.username,
+      });
 
       console.log(color);
 
@@ -222,8 +229,8 @@ const SingleDocument = () => {
     });
 
     return () => {
-      cursors.removeCursor(storedUser.username);
-      socket.disconnect({ roomId: docId, user: storedUser.username });
+      cursors.removeCursor(storedUser?.username);
+      socket.disconnect({ roomId: docId, user: storedUser?.username });
       console.log("Socket disconnected");
     };
   }, [docId]);
@@ -254,7 +261,7 @@ const SingleDocument = () => {
               <img className=" w-6 h-6" src="/link.png" alt="" />
             </button>
             <div className=" border rounded-full min-w-10 min-h-10 w-10 h-10 flex justify-center items-center bg-blue-500 text-white md:hidden">
-              {storedUser.username[0].toUpperCase()}
+              {storedUser?.username[0].toUpperCase()}
             </div>
           </div>
 
@@ -286,7 +293,7 @@ const SingleDocument = () => {
               <img className=" w-6 h-6" src="/link.png" alt="" />
             </button>
             <div className=" border rounded-full min-w-10 min-h-10 w-10 h-10 flex justify-center items-center bg-blue-500 text-white max-md:hidden">
-              {storedUser.username[0].toUpperCase()}
+              {storedUser?.username[0].toUpperCase()}
             </div>
           </div>
         </div>

@@ -81,6 +81,8 @@ const SingleDocument = () => {
   const quillRef = useRef(null);
   const [color, setColor] = useState(null);
   const [room, setRoom] = useState([]);
+  const [saveButtonText, setSaveButtonText] = useState("Save");
+  const [shareButtonText, setShareButtonText] = useState("Share");
 
   if (!color) {
     const randomColor =
@@ -125,7 +127,26 @@ const SingleDocument = () => {
       title,
       content: value,
     });
+    setSaveButtonText("Saved");
+    setTimeout(() => {
+      setSaveButtonText("Save");
+    }, 2000);
     console.log(res);
+  };
+
+  const handleShare = () => {
+    const currentUrl = window.location.href;
+    navigator.clipboard.writeText(currentUrl).then(
+      () => {
+        setShareButtonText("Link Copied");
+        setTimeout(() => {
+          setShareButtonText("Share");
+        }, 2000);
+      },
+      (err) => {
+        console.error("Failed to copy: ", err);
+      }
+    );
   };
 
   const getDoc = async () => {
@@ -204,12 +225,18 @@ const SingleDocument = () => {
               value={title}
               onChange={(e) => setTitle(e.target.value)}
             />
-            <div className="flex mt-2">
+            <div>
               <button
-                className="bg-blue-100 p-2 rounded-lg w-full md:w-auto"
+                className="bg-blue-400 p-2 rounded-lg w-full md:w-auto"
                 onClick={saveDoc}
               >
-                Save
+                {saveButtonText}
+              </button>
+              <button
+                className="bg-blue-400 p-2 rounded-lg w-full md:w-auto"
+                onClick={handleShare}
+              >
+                {shareButtonText}
               </button>
             </div>
           </div>

@@ -72,6 +72,7 @@ const cursorColors = [
 ];
 
 const socket = io("https://documate-36bo.onrender.com");
+// const socket = io("http://localhost:3000");
 
 const SingleDocument = () => {
   const navigate = useNavigate();
@@ -97,12 +98,15 @@ const SingleDocument = () => {
 
   const handleContentChange = useCallback(
     debounce((content, delta, source, editor) => {
+      if (source !== "user") return;
+      console.log("'I'  changed content");
+
       setValue(editor.getContents());
       socket.emit("document-update", {
         roomId: docId,
         content: editor.getContents(),
       });
-    }, 50),
+    }, 30),
     []
   );
 
@@ -185,6 +189,7 @@ const SingleDocument = () => {
 
       socket.on("document-update", ({ content }) => {
         setValue(content);
+        console.log(content);
       });
 
       socket.on("docSaved", async () => {

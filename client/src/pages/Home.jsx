@@ -6,8 +6,14 @@ const Home = () => {
   const [documents, setDocuments] = useState([]);
 
   const getDocs = async () => {
-    const docs = await axios.get("/api/v1/user/docs");
-    setDocuments(docs.data.docs);
+    try {
+      const docs = await axios.get("/api/v1/user/docs");
+      setDocuments(docs.data.docs);
+    } catch (error) {
+      if (error.status == 401) {
+        navigate("/login");
+      }
+    }
   };
 
   const createDocument = async () => {
@@ -26,12 +32,21 @@ const Home = () => {
   return (
     <div className="min-h-screen bg-gray-100">
       <header className="bg-white shadow">
-        <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8 flex justify-between">
           <h1 className="text-3xl font-bold text-gray-900">My Documents</h1>
+          <button
+            className=" font-semibold border bg-blue-400 rounded-xl p-2 text-white"
+            onClick={async () => {
+              const res = await axios.post("/api/v1/auth/logout");
+              console.log(res);
+            }}
+          >
+            Log out
+          </button>
         </div>
       </header>
 
-      <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+      <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8 px-4">
         <div className="mb-4">
           <button
             className="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600"

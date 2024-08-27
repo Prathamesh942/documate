@@ -3,7 +3,7 @@ import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import "react-quill/dist/quill.bubble.css";
 import "./CustomQuill.css";
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import io from "socket.io-client";
 import debounce from "lodash/debounce";
@@ -186,35 +186,40 @@ const SingleDocument = () => {
   return (
     <div className="min-h-screen bg-gray-100">
       <header className="bg-white shadow">
-        <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8 flex justify-between items-center">
-          <div>
+        <div className="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-start md:items-center">
+          <div className="w-full md:w-auto flex items-center mb-4 md:mb-0">
+            <Link to={"/"}>
+              <img
+                src="/logo.png"
+                alt="Logo"
+                className="h-10 w-10 md:h-10 md:w-10 mr-3"
+              />
+            </Link>
             <input
               type="text"
-              className="text-3xl font-bold text-gray-900 bg-transparent border-none outline-none focus:ring-0"
+              className="text-2xl max-md:text-center md:text-3xl font-bold text-gray-900 bg-transparent border-none outline-none focus:ring-0 w-full md:w-auto"
               value={title}
-              onChange={(e) => setTitle(e.target.value)} // Update the title state on input change
+              onChange={(e) => setTitle(e.target.value)}
             />
-
-            <p className="text-gray-500"></p>
-            <div className="flex">
-              <button className="bg-blue-100 p-2 rounded-lg" onClick={saveDoc}>
+            <div className="flex mt-2">
+              <button className="bg-blue-100 p-2 rounded-lg w-full md:w-auto">
                 Save
               </button>
             </div>
           </div>
-          <div>
-            <div className="flex space-x-2">
-              {room.map((user, index) => {
-                return (
-                  <div
-                    key={index}
-                    className="relative w-10 h-10 flex justify-center items-center rounded-full bg-blue-400 text-white font-semibold cursor-pointer hover:bg-blue-500 transition-all duration-200"
-                    title={user} // Show the full username on hover
-                  >
-                    {user[0].toUpperCase()}
-                  </div>
-                );
-              })}
+
+          <div className="w-full md:w-auto">
+            <div className="flex space-x-2 justify-start md:justify-end">
+              {room.map((user, index) => (
+                <div
+                  key={index}
+                  className="relative w-8 h-8 md:w-10 md:h-10 flex justify-center items-center rounded-full bg-blue-400 text-white font-semibold cursor-pointer hover:bg-blue-500 transition-all duration-200"
+                  title={user}
+                  style={{ backgroundColor: user.color }}
+                >
+                  {user[0].toUpperCase()}
+                </div>
+              ))}
             </div>
           </div>
         </div>

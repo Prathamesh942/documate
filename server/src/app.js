@@ -54,6 +54,13 @@ io.on("connection", (socket) => {
     // console.log(data.line);
   });
 
+  socket.on("cursor-move", (data) => {
+    // console.log(data);
+    socket
+      .to(data.roomId)
+      .emit("cursor-move", { x: data.x, y: data.y, user: data.user });
+  });
+
   //cursor update
   socket.on("cursor-update", (data) => {
     socket.to(data.roomId).emit("cursor-update", { cursor: data.cursor });

@@ -314,7 +314,12 @@ const SingleDocument = () => {
           />
         </div>
         <div className=" flex-1 w-[50%] h-screen  rounded-lg ">
-          <Whiteboard socket={socket} roomId={docId} />
+          <Whiteboard
+            socket={socket}
+            roomId={docId}
+            user={storedUser.username}
+            color={color}
+          />
         </div>
       </main>
     </div>

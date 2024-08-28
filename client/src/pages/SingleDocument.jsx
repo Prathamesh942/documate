@@ -8,6 +8,7 @@ import axios from "axios";
 import io from "socket.io-client";
 import debounce from "lodash/debounce";
 import QuillCursors from "quill-cursors";
+import Whiteboard from "../components/Whiteboard";
 
 ReactQuill.Quill.register("modules/cursors", QuillCursors);
 
@@ -299,8 +300,8 @@ const SingleDocument = () => {
         </div>
       </header>
 
-      <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-        <div className="bg-white p-4 shadow-lg rounded-lg">
+      <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8 flex gap-5">
+        <div className="bg-white p-4 shadow-lg rounded-lg flex-1">
           <ReactQuill
             theme="snow"
             value={value}
@@ -311,6 +312,9 @@ const SingleDocument = () => {
             ref={quillRef}
             className="quill"
           />
+        </div>
+        <div className=" flex-1 w-[50%] h-screen  rounded-lg ">
+          <Whiteboard socket={socket} roomId={docId} />
         </div>
       </main>
     </div>

@@ -49,6 +49,11 @@ io.on("connection", (socket) => {
     // console.log(data.content);
   });
 
+  socket.on("whiteboard-update", (data) => {
+    socket.to(data.roomId).emit("whiteboard-update", { line: data.line });
+    // console.log(data.line);
+  });
+
   //cursor update
   socket.on("cursor-update", (data) => {
     socket.to(data.roomId).emit("cursor-update", { cursor: data.cursor });

@@ -7,6 +7,11 @@ const Home = () => {
 
   const getDocs = async () => {
     try {
+      const user = JSON.parse(localStorage.getItem("user"));
+      if (!(user)) {
+        navigate("/login");
+        return;
+      }
       const docs = await axios.get("/api/v1/user/docs");
       setDocuments(docs.data.docs);
     } catch (error) {
@@ -51,6 +56,7 @@ const Home = () => {
             onClick={async () => {
               const res = await axios.post("/api/v1/auth/logout");
               clearCookies();
+              localStorage.removeItem("user");
               navigate("/login");
               console.log(res);
             }}
